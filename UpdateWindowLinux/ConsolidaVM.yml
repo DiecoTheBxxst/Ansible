@@ -1,0 +1,7 @@
+---
+- hosts: all
+  connection: local
+  vars:
+   serverip: "{{ lookup('dig', '{{ inventory_hostname }}') }}"
+  roles:
+  - RemoveSnapShot-Sviluppo

@@ -1,0 +1,9 @@
+---
+- hosts: WindowsAll
+  connection: local
+  vars:
+   serverip: "{{ lookup('dig', '{{ inventory_hostname }}') }}"
+  roles:
+  - TakeSnapShot-Sviluppo
+  - InstallaKB
+  - RiavviaServerWindows

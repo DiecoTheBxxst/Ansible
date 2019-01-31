@@ -1,0 +1,24 @@
+- name: "Ottieni VM"
+  vmware_vm_facts:
+   hostname: "{{ vcenter }}"
+   username: "{{ vcenteruser }}"
+   password: "{{ vcenteruserpassword }}" 
+   validate_certs: yes
+  register: allvms
+
+- name: "Rimuovi Snapshot"
+  vars:
+   vmuuid: "{{ item.value.uuid }}"
+  with_dict: "{{ allvms.virtual_machines }}"
+  when:  item.value.ip_address == "{{ serverip }}"
+  vmware_guest_snapshot:
+   hostname: "{{ vcenter }}"
+   username: "{{ vcenteruser }}"
+   password: "{{ vcenteruserpassword }}"
+   datacenter: Sviluppo
+   validate_certs: yes
+   uuid: "{{ vmuuid }}"
+   state: absent
+   snapshot_name: Ansible-Snapshot
+
+

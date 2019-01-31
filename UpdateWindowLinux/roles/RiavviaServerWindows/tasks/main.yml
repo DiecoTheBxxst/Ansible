@@ -1,0 +1,21 @@
+---
+
+- name: "Riavvio Server"
+  delegate_to: "{{ inventory_hostname }}"
+  vars:
+   ansible_user: "{{ windowsuser}}"
+   ansible_connection: winrm
+   ansible_winrm_server_cert_validation: ignore
+   ansible_winrm_transport: ntlm 
+  win_shell: "Restart-Computer -Force"
+
+- name: "In Attesa del riavvio"
+  pause: seconds=70
+
+- name: "Check Server Up"
+  local_action: win_ping {{ inventory_hostname }}
+  register: result
+  until: result.rc == 0
+  retries: 30
+  delay: 10
+

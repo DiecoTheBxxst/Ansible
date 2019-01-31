@@ -1,0 +1,33 @@
+---
+
+- name: "Carica csv"
+  host: localhost
+  CreaDictionaryFromCSV:
+   src: KBList.csv
+  register: KB 
+
+- name: "Patch"
+  delegate_to: "{{ inventory_hostname }}"
+  vars:
+   ansible_user: "{{ windowsuser}}"
+   ansible_connection: winrm
+   ansible_winrm_server_cert_validation: ignore
+   ansible_winrm_transport: ntlm 
+   articleID: "{{ KB.ansible_facts.KBList }}"
+  win_shell: |
+   $KB={{ item.ArticleID1 }}
+   $Missing= Get-WmiObject -Class CCM_SoftwareUpdate -Namespace root\CCM\ClientSDK | ?{$_.ArticleID -like $KB}
+   $MissingReformatted = @($Missing | ForEach-Object {if($_.ComplianceState -eq 0){[WMI]$_.__PATH}}) 
+   $InstallReturn = Invoke-WmiMethod -Class CCM_SoftwareUpdatesManager -Name InstallUpdates -ArgumentList (,$MissingReformatted) -Namespace root\ccm\clientsdk 
+   $nr = 0
+   if ($InstallReturn.ReturnValue -eq 0 ){
+    while (($Missing) -and ($Missing.EvaluationState -notlike 8)){
+     sleep -Seconds 10
+     $Missing= Get-WmiObject -Class CCM_SoftwareUpdate -Namespace root\CCM\ClientSDK | ?{$_.ArticleID -like $KB}
+     echo "so qua"
+     $nr++
+    }
+   }
+  with_items: "{{ articleID }}"
+  when:  item.Name01 == '{{ inventory_hostname.split(".")[0] | upper }}'
+  register: Output

@@ -1,0 +1,16 @@
+---
+
+- name: "Loading csv"
+  host: localhost
+  CreaDictionaryFromCSV:
+   src: ErrataList.csv
+  register: Errata 
+
+- name: "Patching"
+  delegate_to: "{{ inventory_hostname }}" 
+  vars:
+   listaerrate: "{{ Errata.ansible_facts.ErrataList }}"
+  raw: "sudo /usr/bin/yum update -y --advisory={{ item.Errata }}"
+  with_items: "{{ listaerrate }}"
+  when:  item.Hostname == "{{ inventory_hostname }}"
+  register: Output

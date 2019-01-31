@@ -1,0 +1,9 @@
+---
+- hosts: LinuxAll
+  connection: local
+  vars:
+   serverip: "{{ lookup('dig', '{{ inventory_hostname }}') }}"
+  roles:
+  - TakeSnapShot-Sviluppo
+  - InstallaErrata
+  - RiavviaServerLinux

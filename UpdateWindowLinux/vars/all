@@ -1,0 +1,5 @@
+vcenter='<my vcenter server fqdn>'
+vcenteruser='<my vcenter user name>' 
+vcenteruserpassword='<my vcenter user name password>'
+vcenterdatacenter='<my vcenter datacenter>'
+windowsuser='<my windows user>'

@@ -1,0 +1,8 @@
+[LinuxAll]
+serverhostname.my.domain1
+serverhostname.my.domain2
+
+[WindowsAll]
+serverhostname.my.domain
+
+
